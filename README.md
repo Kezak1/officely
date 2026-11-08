@@ -1,45 +1,76 @@
-# Officely — phase-one prototypes
+# Officely — React app mockup
 
-Clickable, low-fidelity wireframes for an **administrator website** and a **customer mobile app**, including **Parkly parking** booked through Officely.
+An interactive **React + TypeScript** mock of the actual Officely app, using Balsamiq-style text, outlines, buttons, image boxes and map placeholders.
 
-## Open the prototype
+Both views live in this one project:
 
-Open [`prototype/index.html`](prototype/index.html) in a modern browser. No installation, build, server, or internet connection is needed.
+- **Web app:** administrator office inventory and booking management.
+- **Mobile app:** a phone-sized React view for office reservations and Parkly parking.
 
-Optional local server, from this project folder:
+## Launch on this computer
+
+Double-click **start.cmd** in this folder. It starts the React development server and opens your browser. Keep its terminal window open while using the mockup. Press Ctrl+C to stop.
+
+The launcher uses the portable Node.js runtime already prepared inside .tools, so this computer does not need a separate Node installation. All project files, dependencies and local setup are inside officely.
+
+The HTML file is a React entry point; **launch with start.cmd**, rather than double-clicking index.html.
+
+## Standard Node.js setup on another computer
+
+Install Node.js 24 LTS, open a terminal in officely, then run:
 
 ```powershell
-python -m http.server 8000 --bind 127.0.0.1
+npm install
+npm run dev
 ```
 
-Then open <http://localhost:8000/prototype/>. Stop the server with `Ctrl+C`.
+Open the localhost address printed by Vite (normally http://127.0.0.1:5173). The .tools directory and node_modules are ignored by Git and are not required in a shared source repository.
 
-## Review it
+```powershell
+npm run build    # TypeScript check + production build
+npm run preview  # Preview the production build
+```
 
-- **Screen map & notes:** start here to see all navigation paths. Each screen node is clickable. “Print this map” supports printing or saving to PDF through your browser.
-- **Admin web:** office inventory, add/edit/remove, image slots, geographic location, bookings and optional administrator cancellation.
-- **Customer mobile:** office search and reservation, nearby partner parking, combined booking history and independent cancellation.
-- **Screen navigator:** jump directly to any of the 22 screens. This is a reviewer tool, not navigation planned for the actual product.
-- **Review another state:** try empty results, service failures, booking conflicts and cancellation failure on applicable screens.
-- **Reset demo:** restore the sample records. Refreshing the page also resets the prototype.
+## What to try
 
-The demo sign-in uses prefilled fictional credentials. It always opens the fixed demo role; it does not create or authenticate an account. Do not enter real credentials.
+Use the small **Web app / Mobile app** switch at the top. The content below it is the app mockup itself.
+
+1. In Web app, add an office, edit its details and image placeholders, inspect bookings or remove an unused office.
+2. In Mobile app, search Warsaw for **1–8 December 2026**.
+3. Book **Central studio** for **1,260 PLN**.
+4. Select **Find nearby parking**. The app carries over the office location and dates, starting with a 1 km radius.
+5. Book **Centrum covered parking** for a sample **245 PLN** total.
+6. Open Bookings and manage or cancel either reservation independently.
+7. Switch to Web app → Bookings to see the office reservation appear. The administrator also sees bookings originating from Flatly.
+
+The demo starts in an already-signed-in sample session. Sign out to see the sign-in screens. Authentication is simulated; use the prefilled fictional credentials.
+
+**Demo options** contains reset and alternative states for the current screen, including empty results, service errors and availability conflicts. Refresh also resets the data.
 
 ## Scope
 
-This is the first-phase UX deliverable, built with plain HTML, CSS and JavaScript so the team can review it immediately. It is **not** the final ReactTS application, Expo app or backend. All changes remain in memory in the current browser tab. The web and mobile views share that in-memory dataset to demonstrate how a customer booking appears to an administrator.
+All UI is rendered by React components. React and React DOM are the only runtime packages. TypeScript and Vite provide checking and development/build tooling. Styling is plain CSS; there is no UI framework, HTML-string renderer, image generation, or separate non-React prototype.
 
-Images and maps are schematic placeholders. Prices, availability, uploads and partner communication are simulated. Payment is not included in the proposed scope because the supplied brief does not require it.
+The phone view is a React mockup in the browser, not a React Native or Expo build. Real authentication, APIs, file uploads, map integration and payment are not implemented. Records are in memory and shared between the two views in the current tab. Partner prices and communication are simulated.
 
-Read [`docs/ux-plan.md`](docs/ux-plan.md) for the screen inventory, requirement coverage, walkthroughs, assumptions and decisions still to make.
+Draft assumptions: English, PLN, whole-day reservations with an exclusive end date. The team can revise these before implementation.
 
-## Files
+## Structure
 
 | File | Purpose |
 | --- | --- |
-| `prototype/index.html` | Workshop entry point |
-| `prototype/styles.css` | Grayscale web and phone wireframe layouts |
-| `prototype/app.js` | Screens, routes, sample data and clickable interactions |
-| `docs/ux-plan.md` | Review and submission planning document |
+| src/App.tsx | App switch and demo controls |
+| src/Admin.tsx | Administrator screens |
+| src/Mobile.tsx | Customer phone screens |
+| src/shared.tsx | Sign-in, booking details and confirmations |
+| src/components.tsx | Reusable React wireframe controls |
+| src/store.tsx | Shared demo state and hash navigation |
+| src/data.ts | Typed sample data and availability helpers |
+| src/styles.css | Balsamiq-style presentation |
+| src/assets/ | Local Balsamiq Sans font and its OFL license |
+| docs/ux-plan.md | Requirements, screen paths and assumptions |
+| start.cmd | Windows launcher |
 
-No project repository or deployment has been created. The prototype stays in the local workspace as requested. Before submission, agree on naming with your teacher: the supplied text uses `FinalProjectFlatly`, while this team's selected service is Officely.
+Review notes and the screen-path inventory are kept in [docs/ux-plan.md](docs/ux-plan.md).
+
+No public deployment or GitHub repository has been created. Confirm the final repository naming with the teacher: the supplied submission text names Flatly, while this team's service is Officely.

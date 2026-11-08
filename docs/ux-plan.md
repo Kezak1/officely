@@ -1,6 +1,6 @@
 # Officely: UX starting draft
 
-Status: phase-one wireframes for group review. Team/service and local clickable format were confirmed by the user. The remaining product decisions below are proposals, not agreed requirements.
+Status: phase-one React wireframes for group review. The user confirmed Officely, one React project containing the admin web and phone-sized customer views, Balsamiq-style placeholders, and keeping everything in the officely folder. The remaining product decisions below are proposals, not agreed requirements. Launch with start.cmd in officely.
 
 ## Source and interpretation
 
@@ -37,8 +37,8 @@ The Officely admin app lists **office reservations**. The customer's Officely mo
 | A07 | Admin cancellation | Confirmation and impact on partner-origin reservations | Confirm/keep → A06 |
 | A08 | Remove office | Confirmation or active-booking blocker | Remove → A02; keep → A03; deactivate → A04 |
 | M01 | Customer sign-in | Email, password, demo sign-in | M02 |
-| M02 | Office search | Name, city, dates, reference coordinates, radius, type, people, sorting | M03 |
-| M03 | Available offices | Matching available offices, distance, total for selected dates, pagination | M04, M02 |
+| M02 | Office search | Name, city, dates, reference coordinates, radius, type, people | M03 |
+| M03 | Available offices | Matching available offices, distance, total for selected dates, sorting, pagination | M04, M02 |
 | M04 | Office detail | Image and map placeholders, amenities, capacity, location, period total | M05, M03 |
 | M05 | Review office booking | Dates, customer, provider, total, explicit confirm | M06, M03, M04 |
 | M06 | Office confirmation | Booking reference, summary, optional parking prompt | M07, M11 |
@@ -51,7 +51,19 @@ The Officely admin app lists **office reservations**. The customer's Officely mo
 | M13 | Customer cancellation | Confirmation for either service; independent cancellation | Confirm/keep → M12 |
 | M14 | Account | Demo identity, My bookings, sign-out | M11, M01 |
 
-The screen-map view links these paths and supports printing. The screen navigator deliberately permits jumping into a flow for review; production navigation would require authentication and valid application state.
+These IDs are documentation references. The React mock opens directly into the app screens. Use the app links and the small Web app / Mobile app switch to explore. Sign-out opens each sign-in screen. The demo begins with a sample session; production must enforce real authentication.
+
+Main paths:
+
+- Admin inventory: A01 → A02 → A03 → A04 → A03; A02 → A04 also adds an office.
+- Admin removal: A03 → A08 confirmation → A02; active bookings block removal.
+- Admin bookings: A05 → A06 → A07 cancellation dialog → A06.
+- Customer office: M01 → M02 → M03 → M04 → M05 → M06.
+- Optional parking: M06 → M07 → M08 → M09 → M10.
+- Manage either booking: M11 → M12 → M13 cancellation dialog → M12.
+- Account: M14 → M11 or sign-out → M01.
+
+Cancellation and removal confirmations are React modal dialogs, rather than separate full-page layouts. The mobile mock is rendered with React DOM inside a phone frame; it is not an Expo build.
 
 ## Requirement coverage
 
@@ -74,27 +86,27 @@ The screen-map view links these paths and supports printing. The screen navigato
 | View all own bookings | M11–M12 | Combines the demo customer's office and parking reservations; excludes other customers. |
 | Cancel own and partner bookings in the same app | M13 | Independent local cancellation of either service; the other reservation remains confirmed. |
 | Authentication and restricted visibility | A01, M01, M11–M14 | Sign-in wireframes, fixed demo roles and customer-scoped records. No real access control in this static prototype. Enforce on the backend later. |
-| UX design with clear paths | All screens + screen map | Clickable paths, screen IDs and purpose/interaction notes. |
+| UX design with clear paths | All screens + this document | Clickable app navigation; screen IDs and path inventory recorded here. |
 | REST APIs and API documentation | Future implementation | Interface implications recorded below; no backend claimed or implemented. |
 
 ## Walkthroughs for group review
 
 ### 1. Office → parking → independent cancellation
 
-1. Reset the demo. Open **Customer mobile** and use the prefilled sign-in.
+1. Reset the demo. Open **Mobile app**. It starts in a sample session; Account → Sign out opens the prefilled sign-in.
 2. Search Warsaw, **1–8 December 2026**, within **5 km**, any type, capacity 1.
 3. Open **Central studio**. The total is **1,260 PLN** for 7 days.
 4. Continue, review, confirm. Note the new office booking reference.
 5. Choose **Find nearby parking**. The dates and office coordinates are carried over; radius is **1 km**.
 6. Open **Centrum covered parking**. The mocked Parkly quote is **245 PLN** for 7 days.
 7. Confirm and open My bookings. Both reservations are present; paging may be needed.
-8. Find the new Parkly booking, choose Manage booking, then Cancel booking.
+8. Find the new Parkly booking, choose Manage, then Cancel booking.
 9. Confirm cancellation. The parking status changes to Cancelled. The office remains Confirmed.
-10. Open Admin web → Bookings. Search the new office reference. Its source is Officely mobile; the parking reservation is not in this office inventory.
+10. Open Web app → Bookings. Search the new office reference. Its source is Officely mobile; the parking reservation is not in this office inventory.
 
 ### 2. Inventory management
 
-1. Open Admin web → sign in → Add office.
+1. Open Web app → Add office. Use Sign out to review the admin sign-in if needed.
 2. Enter a name, type, capacity, city/address, coordinates, price, amenities and description.
 3. Add two image placeholders, remove one, save.
 4. Reopen Edit, change the capacity, save and confirm the detail updates.
@@ -103,18 +115,18 @@ The screen-map view links these paths and supports printing. The screen navigato
 
 ### 3. Incoming partner booking and optional admin cancellation
 
-1. Open Admin web → Bookings.
-2. Set Source system to Flatly and apply.
+1. Open Web app → Bookings.
+2. Set Booked through to Flatly; the list updates immediately.
 3. Open **OFF-1041**. Verify provider Officely, source Flatly, customer Sam Lee, dates 1–8 December.
 4. Open the cancellation confirmation. Discuss how the change will reach Flatly and its customer before implementing this optional operation.
 
 ### 4. Errors and empty states
 
-1. On office results, select No results or Service unavailable in the review controls.
+1. On office results, open Demo options and select No results or Service unavailable.
 2. On an office review, select Availability conflict. Confirm is replaced by a route to alternative results.
 3. On parking results, select Service unavailable. The screen states that the office booking is unchanged and offers retry or My bookings.
-4. On parking review, select Booking request failed. No partner reservation is created by the simulated failed attempt.
-5. On cancellation, select Cancellation failed. The selected booking remains active until the simulated retry succeeds.
+4. On parking review, select Booking failed. No partner reservation is created by the simulated failed attempt.
+5. Open a cancellation dialog and choose Keep booking to verify that it remains confirmed; confirm cancellation to change only that reservation.
 6. Set the end date before the start date in search. The form stays on search with a date-validation message.
 
 ## Proposed decisions, pending group review
@@ -149,9 +161,9 @@ These are design dependencies, not implemented endpoints.
 
 - Review all screens with the team and agree on the proposed decisions.
 - Treat only agreed features as the final planned scope; add screens if the team adds registration, hourly slots or other features.
-- Share the entire `prototype` folder plus this document, or host the static prototype in a later publishing step. The local files do not yet provide a teacher-accessible URL.
-- A browser's Print / Save as PDF can capture the map or the current wireframe. It does not automatically export every screen.
+- Share the React project source and this document, excluding node_modules and .tools, or publish its Vite build later. The local project does not yet provide a teacher-accessible URL.
+- A browser's Print / Save as PDF can capture the current wireframe. This document records all screen paths; printing does not automatically export every screen.
 - Test the actual shared link/file access with the teachers' expected permissions before submission.
 - Confirm the repository name: the supplied submission text says `FinalProjectFlatly`, but the user's team service is Officely. No repository has been created.
 
-Final implementation, hosting, GitHub submission, Expo installation instructions and the final presentation are outside this starting prototype task.
+Backend implementation, hosting, GitHub submission, Expo installation instructions and the final presentation are outside this starting prototype task. React/TypeScript is already used for all mock screens; the backend and native mobile work remain later phases.
