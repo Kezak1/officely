@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode, Dispatch, SetStateAction } from 'react';
-import { available, days, defaultFilters, initialBookings, initialOffices, total, user } from './data';
+import { available, bookingDays, dailyHours, defaultFilters, initialBookings, initialOffices, total, user as initialUser } from './data';
 import type { Booking, Filters, Space } from './data';
 
 type Setter<T> = Dispatch<SetStateAction<T>>;
@@ -9,6 +9,8 @@ export interface Route { mode: 'admin' | 'mobile'; page: string; id: string }
 interface Store {
   route: Route;
   go: (path: string) => void;
+  user: { name: string; email: string };
+  renameUser: (name: string) => void;
   offices: Space[]; setOffices: Setter<Space[]>;
   bookings: Booking[]; setBookings: Setter<Booking[]>;
   officeFilters: Filters; setOfficeFilters: Setter<Filters>;
@@ -26,6 +28,7 @@ const readRoute = (): Route => {
 };
 export function AppProvider({ children }: { children: ReactNode }) {
   const [route, setRoute] = useState(readRoute);
+  const [user, setUser] = useState(() => ({ ...initialUser }));
   const [offices, setOffices] = useState(() => structuredClone(initialOffices));
   const [bookings, setBookings] = useState(() => structuredClone(initialBookings));
   const [officeFilters, setOfficeFilters] = useState(defaultFilters);
@@ -40,11 +43,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => { if (toast) { const timer = window.setTimeout(() => setToast(''), 4500); return () => clearTimeout(timer); } }, [toast]);
   function go(path: string) { setScenario('normal'); window.location.hash = path; }
-  function reset() { setOffices(structuredClone(initialOffices)); setBookings(structuredClone(initialBookings)); setOfficeFilters(defaultFilters()); setParkFilters({ ...defaultFilters(), radius: 1 }); counter.current = 1050; go(route.mode === 'admin' ? 'admin/offices' : 'mobile/search'); setToast('Demo reset.'); }
+  function reset() { setUser({ ...initialUser }); setOffices(structuredClone(initialOffices)); setBookings(structuredClone(initialBookings)); setOfficeFilters(defaultFilters()); setParkFilters({ ...defaultFilters(), radius: 1 }); counter.current = 1050; go(route.mode === 'admin' ? 'admin/offices' : 'mobile/search'); setToast('Demo reset.'); }
+  function renameUser(name: string) {
+    const trimmed = name.trim();
+    if (trimmed.length < 2 || trimmed.length > 100) return;
+    setUser(prev => ({ ...prev, name: trimmed }));
+    setBookings(prev => prev.map(booking => booking.email === user.email ? { ...booking, customer: trimmed } : booking));
+    setToast('Account name updated.');
+  }
   function reserve(item: Space, partner: boolean) {
     const f = partner ? parkFilters : officeFilters;
     if (scenario === 'error') { setToast('Request failed. No new booking was made.'); return; }
-    if (scenario === 'conflict' || !available(item, f, bookings) || !(days(f) > 0)) { setScenario('conflict'); return; }
+    if (scenario === 'conflict' || !available(item, f, bookings) || !(bookingDays(f) > 0) || !(dailyHours(f) > 0)) { setScenario('conflict'); return; }
     const booking: Booking = { id: `${partner ? 'PRK' : 'OFF'}-${++counter.current}`, itemId: item.id, provider: partner ? 'Parkly' : 'Officely', source: 'Officely mobile', name: item.name, start: f.start, end: f.end, total: total(item, f), customer: user.name, email: user.email, status: 'Confirmed' };
     setBookings(prev => [booking, ...prev]);
     go(`mobile/${partner ? 'park-confirmed' : 'confirmed'}/${booking.id}`);
@@ -56,6 +66,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setBookings(prev => prev.map(x => x.id === id ? { ...x, status: 'Cancelled' } : x));
     go(`${route.mode}/booking/${id}`); setToast('Booking cancelled. Other bookings are unchanged.');
   }
-  return <Context.Provider value={{ route, go, offices, setOffices, bookings, setBookings, officeFilters, setOfficeFilters, parkFilters, setParkFilters, scenario, setScenario, toast, notify: setToast, reset, reserve, cancel }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ route, go, user, renameUser, offices, setOffices, bookings, setBookings, officeFilters, setOfficeFilters, parkFilters, setParkFilters, scenario, setScenario, toast, notify: setToast, reset, reserve, cancel }}>{children}</Context.Provider>;
 }
 export function useApp() { const value = useContext(Context); if (!value) throw new Error('AppProvider is required'); return value; }

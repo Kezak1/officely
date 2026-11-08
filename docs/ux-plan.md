@@ -30,26 +30,26 @@ The Officely admin app lists **office reservations**. The customer's Officely mo
 | --- | --- | --- | --- |
 | A01 | Admin sign-in | Email, password, demo sign-in | A02 |
 | A02 | Office inventory | Summary, name/location search, sort, paging, Add, View | A03, A04, A05 |
-| A03 | Office detail | Images, description, coordinates, map placeholder, rate, status | A04, A05 filtered by office, A08 |
-| A04 | Add/edit office | Name, type, capacity, address, city, coordinates, price, status, description, amenities, image controls | Save → A03; discard → A02/A03 |
+| A03 | Office detail | Images, description, address/map placeholder, hourly rate, status | A04, A05 filtered by office, A08 |
+| A04 | Add/edit office | Name, type, capacity, address, city, hourly price, status, description, amenities, image controls | Save → A03; discard → A02/A03 |
 | A05 | Office bookings | Search, sort, paging, source filter, periods, customers, statuses | A06 |
 | A06 | Booking detail | Reference, item, provider, source, period, customer, price, status | A07, A05 |
 | A07 | Admin cancellation | Confirmation and impact on partner-origin reservations | Confirm/keep → A06 |
 | A08 | Remove office | Confirmation or active-booking blocker | Remove → A02; keep → A03; deactivate → A04 |
 | M01 | Customer sign-in | Email, password, demo sign-in | M02 |
-| M02 | Office search | Name, city, dates, reference coordinates, radius, type, people | M03 |
-| M03 | Available offices | Matching available offices, distance, total for selected dates, sorting, pagination | M04, M02 |
+| M02 | Office search | Name, city, inclusive date range, working-hours/custom-daily-time selector, type, people | M03 |
+| M03 | Available offices | Matching available offices, distance, total for selected hours, sorting, pagination | M04, M02 |
 | M04 | Office detail | Image and map placeholders, amenities, capacity, location, period total | M05, M03 |
-| M05 | Review office booking | Dates, customer, provider, total, explicit confirm | M06, M03, M04 |
+| M05 | Review office booking | Dates, daily start/end times, total duration, customer, provider, total, explicit confirm | M06, M03, M04 |
 | M06 | Office confirmation | Booking reference, summary, optional parking prompt | M07, M11 |
-| M07 | Parking search/results | Inherited dates and coordinates, radius 1 km, editable filters, total quote, pagination | M08, M11 |
+| M07 | Parking search/results | Inherited dates, daily hours and internal office location, radius 1 km, editable filters, total quote, pagination | M08, M11 |
 | M08 | Parking detail | Provider, image/map placeholders, location, type, quote | M09, M07 |
 | M09 | Review parking booking | Provider, period, customer, quoted total, explicit confirm | M10, M07, M08 |
 | M10 | Parking confirmation | Separate parking reference, summary | M11 |
 | M11 | My bookings | Own office/parking records, search, status filter, sorting, pagination | M12, M02 |
-| M12 | Booking detail | Provider, source, reference, dates, customer, status, total | M13, M11 |
+| M12 | Booking detail | Provider, source, reference, dates, daily hours, customer, status, total | M13, M11 |
 | M13 | Customer cancellation | Confirmation for either service; independent cancellation | Confirm/keep → M12 |
-| M14 | Account | Demo identity, My bookings, sign-out | M11, M01 |
+| M14 | Account | Demo identity, editable profile name, My bookings, sign-out | M11, M01 |
 
 These IDs are documentation references. The React mock opens directly into the app screens. Use the app links and the small Web app / Mobile app switch to explore. Sign-out opens each sign-in screen. The demo begins with a sample session; production must enforce real authentication.
 
@@ -71,21 +71,21 @@ Cancellation and removal confirmations are React modal dialogs, rather than sepa
 | --- | --- | --- |
 | Admin view, add, edit, remove items | A02–A04, A08 | Mutable in-memory offices. Removal blocked for offices with confirmed bookings. |
 | Manage item image(s) | A03–A04 | Add/remove placeholder slots; actual file selection, storage and image delivery come later. |
-| Manage location and relevant metadata | A03–A04 | Address, city, latitude/longitude, type, capacity, amenities and rate. Map integration comes later. |
-| View booking period | A05–A06 | Date range shown in list and details. |
+| Manage location and relevant metadata | A03–A04 | Address, city, type, capacity, amenities and hourly rate. Coordinates are resolved internally from the address; map integration comes later. |
+| View booking period | A05–A06 | Inclusive date range and exact daily start/end times shown in list and details. |
 | Identify originating system | A05–A06 | Officely mobile vs Flatly; provider is shown separately. |
 | Identify the booking customer | A05–A06 | Name and email. All fictional sample data. |
 | Optional admin cancellation | A07 | Included as a proposed feature; local status changes appear in the customer view for that customer's bookings. |
 | Search, sorting, paging on repeated data | A02, A05, M02–M03, M07, M11 | Controls work locally. Production must perform these operations on the server, including partner results. |
-| Customer browse/search own service | M02–M04 | Name, city, coordinates, proximity, workspace type and capacity. |
-| Only available items for the chosen period | M03, M07 | Excludes inactive offices and overlaps with confirmed sample reservations; rechecked at booking. |
-| Display total for selected period | M03–M05, M07–M09 | Totals use the selected date range; result cards do not show an unrelated daily price. |
+| Customer browse/search own service | M02–M04 | Name, city, date range/daily hours, proximity, workspace type and capacity. Customers never enter coordinates. |
+| Only available items for the chosen period | M03, M07 | Excludes inactive offices when both the inclusive date ranges and daily time windows overlap with a confirmed reservation; rechecked at booking. Adjacent time windows are allowed. |
+| Display total for selected period | M03–M05, M07–M09 | Totals use selected days × daily hours × hourly rate; Parkly totals remain partner quotes. |
 | Book own service | M05–M06 | Adds a demo reservation; visible in My bookings and the admin booking list. |
-| Search and book partner service | M07–M10 | Parkly parking, default 1 km from booked office, inherited dates; separate confirmation. |
+| Search and book partner service | M07–M10 | Parkly parking, default 1 km from booked office, inherited dates and daily hours; separate confirmation. |
 | Partner computes price | M07–M09 | Clearly marked mock partner quote. Local sample arithmetic stands in for Parkly's API response; final implementation must use the partner's returned quote. |
 | View all own bookings | M11–M12 | Combines the demo customer's office and parking reservations; excludes other customers. |
 | Cancel own and partner bookings in the same app | M13 | Independent local cancellation of either service; the other reservation remains confirmed. |
-| Authentication and restricted visibility | A01, M01, M11–M14 | Sign-in wireframes, fixed demo roles and customer-scoped records. No real access control in this static prototype. Enforce on the backend later. |
+| Authentication and restricted visibility | A01, M01, M11–M14 | Sign-in wireframes, fixed demo roles, editable customer display name and customer-scoped records. Email remains the stable demo identity. No real access control in this static prototype. Enforce on the backend later. |
 | UX design with clear paths | All screens + this document | Clickable app navigation; screen IDs and path inventory recorded here. |
 | REST APIs and API documentation | Future implementation | Interface implications recorded below; no backend claimed or implemented. |
 
@@ -94,11 +94,11 @@ Cancellation and removal confirmations are React modal dialogs, rather than sepa
 ### 1. Office → parking → independent cancellation
 
 1. Reset the demo. Open **Mobile app**. It starts in a sample session; Account → Sign out opens the prefilled sign-in.
-2. Search Warsaw, **1–8 December 2026**, within **5 km**, any type, capacity 1.
-3. Open **Central studio**. The total is **1,260 PLN** for 7 days.
+2. Search Warsaw for **1–3 December 2026**, choose **Custom hours**, set **10:00–12:00**, any type, capacity 1.
+3. Open **Central studio**. The total is **180 PLN** for 3 days × 2 hours.
 4. Continue, review, confirm. Note the new office booking reference.
-5. Choose **Find nearby parking**. The dates and office coordinates are carried over; radius is **1 km**.
-6. Open **Centrum covered parking**. The mocked Parkly quote is **245 PLN** for 7 days.
+5. Choose **Find nearby parking**. The dates, daily hours and internal office location are carried over; radius is **1 km**. No coordinate fields are exposed.
+6. Open **Centrum covered parking**. Review the mocked Parkly quote for the same three days and daily hours.
 7. Confirm and open My bookings. Both reservations are present; paging may be needed.
 8. Find the new Parkly booking, choose Manage, then Cancel booking.
 9. Confirm cancellation. The parking status changes to Cancelled. The office remains Confirmed.
@@ -107,7 +107,7 @@ Cancellation and removal confirmations are React modal dialogs, rather than sepa
 ### 2. Inventory management
 
 1. Open Web app → Add office. Use Sign out to review the admin sign-in if needed.
-2. Enter a name, type, capacity, city/address, coordinates, price, amenities and description.
+2. Enter a name, type, capacity, city/address, hourly price, amenities and description. Coordinates are not requested.
 3. Add two image placeholders, remove one, save.
 4. Reopen Edit, change the capacity, save and confirm the detail updates.
 5. Remove this new office. It has no active bookings and can be removed.
@@ -117,7 +117,7 @@ Cancellation and removal confirmations are React modal dialogs, rather than sepa
 
 1. Open Web app → Bookings.
 2. Set Booked through to Flatly; the list updates immediately.
-3. Open **OFF-1041**. Verify provider Officely, source Flatly, customer Sam Lee, dates 1–8 December.
+3. Open **OFF-1041**. Verify provider Officely, source Flatly, customer Sam Lee, and 1–3 December from 09:00–17:00 each day.
 4. Open the cancellation confirmation. Discuss how the change will reach Flatly and its customer before implementing this optional operation.
 
 ### 4. Errors and empty states
@@ -127,20 +127,22 @@ Cancellation and removal confirmations are React modal dialogs, rather than sepa
 3. On parking results, select Service unavailable. The screen states that the office booking is unchanged and offers retry or My bookings.
 4. On parking review, select Booking failed. No partner reservation is created by the simulated failed attempt.
 5. Open a cancellation dialog and choose Keep booking to verify that it remains confirmed; confirm cancellation to change only that reservation.
-6. Set the end date before the start date in search. The form stays on search with a date-validation message.
+6. Set the end date before the start date or the daily end time before the daily start time. The form stays on search with the relevant validation message.
 
 ## Proposed decisions, pending group review
 
 - **Language:** English. Easy to change after agreeing on terminology.
 - **Office categories:** private office, coworking desk, meeting room. Capacity is a minimum filter. One listing represents one reservable unit; shared seat inventory is not modeled.
-- **Dates:** whole-day bookings with an exclusive end date. For example, 1–8 December is seven days. No hourly booking in this draft.
-- **Currency and pricing:** PLN, a single total, no proposed tax/fee breakdown or payment screen. Office prices use a simple daily sample rate. Production partner prices are owned by Parkly.
-- **Optional parking:** start with the office's location and dates, radius 1 km. The customer may change dates/radius or skip parking. A direct Parking tab permits searching without an existing office booking.
+- **Time:** a booking covers an inclusive date range and the same daily time window on every selected day. Users choose the 09:00–17:00 working-hours preset or custom daily start/end times in 30-minute increments. Daily end time is exclusive; adjacent time windows are allowed.
+- **Currency and pricing:** PLN, a single total, no proposed tax/fee breakdown or payment screen. Office totals are number of days × daily hours × hourly rate. Production partner prices are owned by Parkly.
+- **Location:** customers and administrators enter human-readable city/address data, not latitude/longitude. Production should geocode the address once and retain coordinates privately for distance search and partner handoff.
+- **Optional parking:** start with the office's internal location, date and hours, radius 1 km. The customer may change the period/radius or skip parking. A direct Parking tab permits searching without an existing office booking.
 - **Independent reservations:** an office and parking have separate references and cancellation actions. Cancelling one does not automatically cancel the other.
 - **Removal:** an office with confirmed reservations cannot be removed; deactivation stops new reservations without changing existing ones. This is a proposed policy, not an explicit rule from the brief.
-- **Accounts:** sign-in only for this draft; use fixed demo identities. Registration, password recovery and profile editing need a scope decision before being added as planned features.
+- **Accounts:** sign-in and display-name editing are included for the fixed demo identity. Registration, password recovery and other profile fields need a scope decision before being added as planned features.
+- **Profile name:** customers may change their own 2–100 character display name from Account. The demo propagates it to their existing and future booking records; email remains the stable ownership identifier. Production must authorize the update for the authenticated user.
 - **Admin cancellation:** optional in the brief; provisionally included. Customer notification and partner synchronization still need design agreement.
-- **Availability periods:** occupied date ranges derive from confirmed reservations; listing deactivation applies generally. Date-specific maintenance blocks are not yet planned.
+- **Availability periods:** a conflict exists when inclusive date ranges intersect and daily time windows overlap (`existing.startTime < requested.endTime && existing.endTime > requested.startTime`). Listing deactivation applies generally. Date-specific maintenance blocks are not yet planned.
 - **Integration architecture:** propose mobile → Officely backend → Parkly backend. This is a recommendation for team discussion, not an agreed data contract.
 
 ## Partner contract questions for a later backend discussion
@@ -149,7 +151,7 @@ These are design dependencies, not implemented endpoints.
 
 | Topic | Information / agreement needed |
 | --- | --- |
-| Availability search | Date semantics/time zone, reference coordinates, radius units, filters, sorting, page/page size. |
+| Availability search | Inclusive date-range and daily-time semantics, Europe/Warsaw time zone, internal reference coordinates, radius units, filters, sorting, page/page size. |
 | Offer and quote | Provider/item ID, name, images, location, availability, total, currency, quote ID/expiry if supported. |
 | Booking request | Customer identity mapping, provider/item ID, period, quote reference and duplicate-request handling. |
 | Booking response | Provider booking reference, period, total, status and originating application. |

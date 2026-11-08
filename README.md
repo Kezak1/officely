@@ -36,12 +36,13 @@ npm run preview  # Preview the production build
 Use the small **Web app / Mobile app** switch at the top. The content below it is the app mockup itself.
 
 1. In Web app, add an office, edit its details and image placeholders, inspect bookings or remove an unused office.
-2. In Mobile app, search Warsaw for **1–8 December 2026**.
-3. Book **Central studio** for **1,260 PLN**.
-4. Select **Find nearby parking**. The app carries over the office location and dates, starting with a 1 km radius.
-5. Book **Centrum covered parking** for a sample **245 PLN** total.
+2. In Mobile app, search Warsaw for **1–3 December 2026** and choose either **Working hours (09:00–17:00)** or custom daily hours such as **10:00–12:00**.
+3. Book **Central studio**; the three-day, two-hours-per-day example totals **180 PLN**.
+4. Select **Find nearby parking**. The app privately carries over the office location, dates and daily hours, starting with a 1 km radius.
+5. Book **Centrum covered parking** for the mocked partner quote.
 6. Open Bookings and manage or cancel either reservation independently.
 7. Switch to Web app → Bookings to see the office reservation appear. The administrator also sees bookings originating from Flatly.
+8. In Mobile app → Account, change the profile name. The new name appears in greetings and the customer's booking records.
 
 The demo starts in an already-signed-in sample session. Sign out to see the sign-in screens. Authentication is simulated; use the prefilled fictional credentials.
 
@@ -53,7 +54,7 @@ All UI is rendered by React components. React and React DOM are the only runtime
 
 The phone view is a React mockup in the browser, not a React Native or Expo build. Real authentication, APIs, file uploads, map integration and payment are not implemented. Records are in memory and shared between the two views in the current tab. Partner prices and communication are simulated.
 
-Draft assumptions: English, PLN, whole-day reservations with an exclusive end date. The team can revise these before implementation.
+Draft assumptions: English, PLN, inclusive multi-day reservations with the same daily hours, 30-minute time increments, and a working-hours preset of 09:00–17:00. Coordinates are internal location data and are never entered by customers. The team can revise these before implementation.
 
 ## Structure
 
