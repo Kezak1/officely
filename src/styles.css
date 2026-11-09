@@ -1,5 +1,5 @@
 @font-face { font-family: 'Balsamiq Sans'; src: url('./assets/BalsamiqSans-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
-:root { font-family: 'Balsamiq Sans', 'Comic Sans MS', cursive; color: #303030; background: #f7f7f5; font-synthesis: weight; --ink: #434343; --line: #b7b7b0; --paper: #fff; --sketch: 4px 8px 4px 6px / 6px 4px 7px 3px; }
+:root { font-family: 'Balsamiq Sans', 'Comic Sans MS', cursive; color: #303030; background: #f7f7f5; font-synthesis: weight; --ink: #434343; --sketch: 4px 8px 4px 6px / 6px 4px 7px 3px; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 button, input, textarea, select { font: inherit; }
@@ -146,9 +146,6 @@ td a { text-decoration: underline; text-underline-offset: 3px; }
 .phone-content .button { font-size: 15px; }
 .phone-content .wide { margin-top: 13px; }
 .phone-content .back { margin-bottom: 19px; }
-.location-options { margin: 23px 0; font-size: 13px; color: #666; }
-.location-options summary { cursor: pointer; }
-.location-options .form-grid { margin-top: 20px; }
 .search-map { margin-top: 26px; }
 .search-map .placeholder { min-height: 125px; }
 .phone-home { width: 90px; height: 3px; background: #777; margin: 14px auto 3px; border-radius: 4px; }

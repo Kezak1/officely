@@ -15,8 +15,6 @@ export function Icon({ name, size = 22 }: { name: string; size?: number }) {
     logout: <><path d="M10 4H4v16h6m1-8h10m-4-4 4 4-4 4" /></>,
     edit: <><path d="m4 16-1 5 5-1L21 7l-5-4ZM13 6l5 5" /></>,
     grid: <path d="M3 3h7v7H3ZM14 3h7v7h-7ZM3 14h7v7H3ZM14 14h7v7h-7Z" />,
-    calendar: <><path d="M3 5h18v16H3ZM3 10h18M7 2v6M17 2v6M7 14h2m3 0h2m3 0h1M7 17h2m3 0h2" /></>,
-    menu: <path d="M4 6h16M4 12h16M4 18h16" />,
     close: <path d="m5 5 14 14M19 5 5 19" />,
   };
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name] || paths.office}</svg>;

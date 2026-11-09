@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useApp } from './store';
 import { available, bookingDate, bookingDays, bookingEndDate, bookingTime, dailyHours, distance, hours, money, officeTypes, parking, period, searchSpaces, total } from './data';
-import type { Filters, Space } from './data';
+import type { Filters } from './data';
 import { Back, Button, Empty, Facts, Field, Heading, Icon, Link, Notice, Pager, Placeholder, Select, Status } from './components';
 import { BookingDetails, Login, NotFound, ServiceFailure } from './shared';
 

@@ -12,7 +12,7 @@ interface Store {
   user: { name: string; email: string };
   renameUser: (name: string) => void;
   offices: Space[]; setOffices: Setter<Space[]>;
-  bookings: Booking[]; setBookings: Setter<Booking[]>;
+  bookings: Booking[];
   officeFilters: Filters; setOfficeFilters: Setter<Filters>;
   parkFilters: Filters; setParkFilters: Setter<Filters>;
   scenario: Scenario; setScenario: Setter<Scenario>;
@@ -66,6 +66,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setBookings(prev => prev.map(x => x.id === id ? { ...x, status: 'Cancelled' } : x));
     go(`${route.mode}/booking/${id}`); setToast('Booking cancelled. Other bookings are unchanged.');
   }
-  return <Context.Provider value={{ route, go, user, renameUser, offices, setOffices, bookings, setBookings, officeFilters, setOfficeFilters, parkFilters, setParkFilters, scenario, setScenario, toast, notify: setToast, reset, reserve, cancel }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ route, go, user, renameUser, offices, setOffices, bookings, officeFilters, setOfficeFilters, parkFilters, setParkFilters, scenario, setScenario, toast, notify: setToast, reset, reserve, cancel }}>{children}</Context.Provider>;
 }
 export function useApp() { const value = useContext(Context); if (!value) throw new Error('AppProvider is required'); return value; }
