@@ -31,6 +31,7 @@ export interface Booking {
 export interface Filters {
   q: string;
   city: string;
+  address: string;
   start: string;
   end: string;
   lat: number;
@@ -63,7 +64,7 @@ export const initialBookings: Booking[] = [
   { id: 'OFF-1038', itemId: 'o3', provider: 'Officely', source: 'Flatly', name: 'North meeting room', start: '2026-11-18T10:00', end: '2026-11-18T14:00', total: 180, customer: 'Robin Kim', email: 'robin@example.test', status: 'Confirmed' },
   { id: 'OFF-1033', itemId: 'o5', provider: 'Officely', source: 'Officely mobile', name: 'Old Town workspace', start: '2026-10-10T09:00', end: '2026-10-10T17:00', total: 128, customer: user.name, email: user.email, status: 'Cancelled' },
 ];
-export const defaultFilters = (): Filters => ({ q: '', city: 'Warsaw', start: '2026-12-01T09:00', end: '2026-12-03T17:00', lat: 52.2297, lng: 21.0122, radius: 5, type: '', capacity: 1, sort: 'name', timePreset: 'workday' });
+export const defaultFilters = (): Filters => ({ q: '', city: 'Warsaw', address: '', start: '2026-12-01T09:00', end: '2026-12-03T17:00', lat: 52.2297, lng: 21.0122, radius: 5, type: '', capacity: 1, sort: 'name', timePreset: 'workday' });
 export const money = (value: number) => new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(value) + ' PLN';
 export const bookingDate = (f: Pick<Filters, 'start'>) => f.start.slice(0, 10);
 export const bookingEndDate = (f: Pick<Filters, 'end'>) => f.end.slice(0, 10);
